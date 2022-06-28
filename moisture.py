@@ -1,16 +1,26 @@
 import RPi.GPIO as GPIO
 import time
+import datetime
+import sqlite3
 
+# define GPIO pins here
 MOISTURE_POWER_GPIO = 26
 MOISTURE_SENSOR_GPIO = 21
 
+# how often will readings be taken?
 DELAY = 10 #seconds
 
+# set GPIO mode and pins
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(MOISTURE_POWER_GPIO, GPIO.OUT)
 GPIO.setup(MOISTURE_SENSOR_GPIO, GPIO.IN)
 
+# variables
 MOISTURE_OK = 0
+
+# set up SQLite connection
+connection = sqlite3.connect('weedwatcher.db')
+cursor = connection.cursor()
 
 try:
 	while True:
@@ -30,6 +40,8 @@ try:
 		GPIO.output(MOISTURE_POWER_GPIO, 0)
 
 		# write result to db
+		cursor.execute("INSERT INTO moisture VALUES(?, ?)", (MOISTURE_OK, str(datetime.datetime.now())))
+		connection.commit()
 
 		# sleep
 		time.sleep(DELAY)
@@ -38,3 +50,5 @@ except KeyboardInterrupt:
 	GPIO.cleanup()
 
 # incorporate motion sensor to take more frequent readings if motion detected (ie, someone watering the plants)
+# add email or sms notification when plant needs watering
+# add cooldown so that user is not notified for successive dry readings
