@@ -81,7 +81,7 @@ def moisture_sensor_start():
 				MOISTURE_2_OK = 1
 
 			# sensor 3 - determine wet or not wet
-			if GPIO.input(MOISTURE_SENSOR_2_GPIO):
+			if GPIO.input(MOISTURE_SENSOR_3_GPIO):
 				print(MOISTURE_SENSOR_3_LABEL + " is dry, go water it!")
 				MOISTURE_3_OK = 0
 			else:
