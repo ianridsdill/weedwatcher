@@ -3,13 +3,18 @@ import multiprocessing
 
 # define GPIO pins here
 MOISTURE_POWER_GPIO = 26
+
 MOISTURE_SENSOR_1_GPIO = 21
 MOISTURE_SENSOR_1_LABEL = 'Strain #1'
+
+MOISTURE_SENSOR_2_GPIO = 19
+MOISTURE_SENSOR_2_LABEL = 'Strain #2'
 
 # set GPIO mode and pins
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(MOISTURE_POWER_GPIO, GPIO.OUT)
 GPIO.setup(MOISTURE_SENSOR_1_GPIO, GPIO.IN)
+GPIO.setup(MOISTURE_SENSOR_2_GPIO, GPIO_IN)
 GPIO.setwarnings(False)
 
 # set up Flask api
@@ -45,6 +50,7 @@ def moisture_sensor_start():
 
 	DELAY = 10 #seconds
 	MOISTURE_1_OK = 0
+	MOISTURE_2_OK = 0
 
 	try:
 		while True:
@@ -60,11 +66,20 @@ def moisture_sensor_start():
 				print(MOISTURE_SENSOR_1_LABEL + " is fine. Relax.")
 				MOISTURE_1_OK = 1
 
+			# sensor 2 - determine wet or not wet
+			if GPIO.input(MOISTURE_SENSOR_2_GPIO):
+				print(MOISTURE_SENSOR_2_LABEL + " is dry, go water it!")
+				MOISTURE_2_OK = 0
+			else:
+				print(MOISTURE_SENSOR_2_LABEL + " is fine. Relax.")
+				MOISTURE_2_OK = 1
+
 			# turn off sensor
 			GPIO.output(MOISTURE_POWER_GPIO, 0)
 
 			# write result to db
-			cursor.execute("INSERT INTO moisture VALUES(?, ?, ?, ?)", (MOISTURE_1_OK, str(datetime.datetime.now()), 1, MOISTURE_SENSOR_1_LABEL))
+			cursor.execute("INSERT INTO moisture VALUES(?, ?, ?, ?)", (MOISTURE_1_OK, str(datetime.datetime.now(), 1, MOISTURE_SENSOR_1_LABEL)))
+			cursor.execute("INSERT INTO moisture VALUES(?, ?, ?, ?)", (MOISTURE_2_OK, str(datetime.datetime.now(), 2, MOISTURE_SENSOR_2_LABEL)))
 			connection.commit()
 
 			# sleep
