@@ -4,6 +4,7 @@ import multiprocessing
 # define GPIO pins here
 MOISTURE_POWER_GPIO = 26
 MOISTURE_SENSOR_1_GPIO = 21
+MOISTURE_SENSOR_1_LABEL = 'Strain #1'
 
 # set GPIO mode and pins
 GPIO.setmode(GPIO.BCM)
@@ -53,17 +54,17 @@ def moisture_sensor_start():
 
 			# sensor 1 - determine wet or not wet
 			if GPIO.input(MOISTURE_SENSOR_1_GPIO):
-				print("Plant is dry, go water it!")
+				print(MOISTURE_SENSOR_1_LABEL + " is dry, go water it!")
 				MOISTURE_1_OK = 0
 			else:
-				print("Plant is fine. Relax.")
+				print(MOISTURE_SENSOR_1_LABEL + " is fine. Relax.")
 				MOISTURE_1_OK = 1
 
 			# turn off sensor
 			GPIO.output(MOISTURE_POWER_GPIO, 0)
 
 			# write result to db
-			cursor.execute("INSERT INTO moisture VALUES(?, ?)", (MOISTURE_1_OK, str(datetime.datetime.now())))
+			cursor.execute("INSERT INTO moisture VALUES(?, ?, ?, ?)", (MOISTURE_1_OK, str(datetime.datetime.now(), 1, MOISTURE_SENSOR_1_LABEL)))
 			connection.commit()
 
 			# sleep
