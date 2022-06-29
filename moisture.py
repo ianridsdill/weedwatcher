@@ -20,6 +20,8 @@ def flask():
 	app.config["DEBUG"] = False
 
 	# define API endpoints
+
+	# default
 	@app.route('/', methods=['GET'])
 	def home():
 		return codecs.open("index.html", 'r').read()
@@ -47,7 +49,7 @@ def moisture_sensor_start():
 		while True:
 			# turn on sensor
 			GPIO.output(MOISTURE_POWER_GPIO, 1)
-			time.sleep(1)
+			time.sleep(1) # give the sensor time to turn on before taking a reading
 
 			# determine wet or not wet
 			if GPIO.input(MOISTURE_SENSOR_GPIO):
@@ -67,8 +69,10 @@ def moisture_sensor_start():
 			# sleep
 			time.sleep(DELAY)
 
-	except KeyboardInterrupt:
+	except KeyboardInterrupt: # stop sensor readings and reset GPIO pins
 		GPIO.cleanup()
+
+# start each part of the app in it's own process
 
 # start flask api
 process_flask = multiprocessing.Process(target=flask, args=())
@@ -79,6 +83,8 @@ process_flask.start()
 process_moisture_sensor = multiprocessing.Process(target=moisture_sensor_start, args=())
 
 process_moisture_sensor.start()
+
+# start reading from temp+humidity sensor
 
 # incorporate motion sensor to take more frequent readings if motion detected (ie, someone watering the plants)
 # add email or sms notification when plant needs watering
