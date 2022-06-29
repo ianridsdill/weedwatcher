@@ -64,7 +64,7 @@ def moisture_sensor_start():
 			GPIO.output(MOISTURE_POWER_GPIO, 0)
 
 			# write result to db
-			cursor.execute("INSERT INTO moisture VALUES(?, ?, ?, ?)", (MOISTURE_1_OK, str(datetime.datetime.now(), 1, MOISTURE_SENSOR_1_LABEL)))
+			cursor.execute("INSERT INTO moisture VALUES(?, ?, ?, ?)", (MOISTURE_1_OK, str(datetime.datetime.now()), 1, MOISTURE_SENSOR_1_LABEL))
 			connection.commit()
 
 			# sleep
