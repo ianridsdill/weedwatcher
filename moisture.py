@@ -14,7 +14,7 @@ MOISTURE_SENSOR_2_LABEL = 'Strain #2'
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(MOISTURE_POWER_GPIO, GPIO.OUT)
 GPIO.setup(MOISTURE_SENSOR_1_GPIO, GPIO.IN)
-GPIO.setup(MOISTURE_SENSOR_2_GPIO, GPIO_IN)
+GPIO.setup(MOISTURE_SENSOR_2_GPIO, GPIO.IN)
 GPIO.setwarnings(False)
 
 # set up Flask api
@@ -78,8 +78,8 @@ def moisture_sensor_start():
 			GPIO.output(MOISTURE_POWER_GPIO, 0)
 
 			# write result to db
-			cursor.execute("INSERT INTO moisture VALUES(?, ?, ?, ?)", (MOISTURE_1_OK, str(datetime.datetime.now(), 1, MOISTURE_SENSOR_1_LABEL)))
-			cursor.execute("INSERT INTO moisture VALUES(?, ?, ?, ?)", (MOISTURE_2_OK, str(datetime.datetime.now(), 2, MOISTURE_SENSOR_2_LABEL)))
+			cursor.execute("INSERT INTO moisture VALUES(?, ?, ?, ?)", (MOISTURE_1_OK, str(datetime.datetime.now()), 1, MOISTURE_SENSOR_1_LABEL))
+			cursor.execute("INSERT INTO moisture VALUES(?, ?, ?, ?)", (MOISTURE_2_OK, str(datetime.datetime.now()), 2, MOISTURE_SENSOR_2_LABEL))
 			connection.commit()
 
 			# sleep
