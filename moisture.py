@@ -2,6 +2,9 @@ import RPi.GPIO as GPIO
 import time
 import datetime
 import sqlite3
+import flask
+import codecs
+import multiprocessing
 
 # define GPIO pins here
 MOISTURE_POWER_GPIO = 26
@@ -14,6 +17,7 @@ DELAY = 10 #seconds
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(MOISTURE_POWER_GPIO, GPIO.OUT)
 GPIO.setup(MOISTURE_SENSOR_GPIO, GPIO.IN)
+GPIO.setwarnings(False)
 
 # variables
 MOISTURE_OK = 0
@@ -22,6 +26,18 @@ MOISTURE_OK = 0
 connection = sqlite3.connect('weedwatcher.db')
 cursor = connection.cursor()
 
+# set up Flask
+app = flask.Flask(__name__)
+app.config["DEBUG"] = True
+
+# define API endpoints
+@app.route('/', methods=['GET'])
+def home():
+	return codecs.open("index.html", 'r').read()
+
+app.run(host='0.0.0.0')
+
+# start sensor readings
 try:
 	while True:
 		# turn on sensor
