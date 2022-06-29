@@ -8,3 +8,11 @@ playing around with a raspberry pi to monitor conditions inside the greenhouse. 
 - [kuman 5PCS Soil Moisture Sensor Module Kit](https://www.amazon.ca/Kuman-Moisture-Compatible-Raspberry-Automatic/dp/B071F4RDHY/ref=sr_1_5?crid=1QQ3OLZZFPSRA&keywords=moisture+sensor+raspberry+pi&qid=1656445763&sprefix=moisture+sensor+raspberry+pi%2Caps%2C137&sr=8-5)
 
 ![Project in progress](https://github.com/ianridsdill/weedwatcher/blob/master/PXL_20220628_193854988.jpg)
+
+some guides I used to build this:
+
+- https://pimylifeup.com/raspberry-pi-humidity-sensor-dht22/
+- https://www.instructables.com/Soil-Moisture-Sensor-Raspberry-Pi/
+- https://thepihut.com/blogs/raspberry-pi-tutorials/raspberry-pi-plant-pot-moisture-sensor-with-email-notification-tutorial
+- https://opensource.com/article/18/4/flask
+- https://docs.python.org/3/library/codecs.html
