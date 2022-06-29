@@ -7,9 +7,9 @@ playing around with a raspberry pi to monitor conditions inside the greenhouse. 
 - AM2 302 temperature + humidity sensor
 - [kuman 5PCS Soil Moisture Sensor Module Kit](https://www.amazon.ca/Kuman-Moisture-Compatible-Raspberry-Automatic/dp/B071F4RDHY/ref=sr_1_5?crid=1QQ3OLZZFPSRA&keywords=moisture+sensor+raspberry+pi&qid=1656445763&sprefix=moisture+sensor+raspberry+pi%2Caps%2C137&sr=8-5)
 
-![Project in progress](https://github.dev/ianridsdill/weedwatcher/blob/master/images/PXL_20220629_183523617.jpg)
+![Project in progress](https://github.com/ianridsdill/weedwatcher/blob/master/images/PXL_20220629_183523617.jpg)
 
-![Console output](https://github.dev/ianridsdill/weedwatcher/blob/master/images/go_water_it.jpg)
+![Console output](https://github.com/ianridsdill/weedwatcher/blob/master/images/go_water_it.jpg)
 
 some guides I used to build this:
 
