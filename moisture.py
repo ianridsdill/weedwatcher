@@ -1,5 +1,9 @@
 import RPi.GPIO as GPIO
 import multiprocessing
+import Adafruit_DHT
+import sqlite3
+import datetime
+import time
 
 # define GPIO pins here
 MOISTURE_POWER_GPIO = 26
@@ -13,6 +17,9 @@ MOISTURE_SENSOR_2_LABEL = 'Strain #2'
 MOISTURE_SENSOR_3_GPIO = 13
 MOISTURE_SENSOR_3_LABEL = 'Strain #3'
 
+DHT_SENSOR_GPIO = 4
+DHT_SENSOR_TYPE = Adafruit_DHT.AM2302
+
 # set GPIO mode and pins
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(MOISTURE_POWER_GPIO, GPIO.OUT)
@@ -20,6 +27,10 @@ GPIO.setup(MOISTURE_SENSOR_1_GPIO, GPIO.IN)
 GPIO.setup(MOISTURE_SENSOR_2_GPIO, GPIO.IN)
 GPIO.setup(MOISTURE_SENSOR_3_GPIO, GPIO.IN)
 GPIO.setwarnings(False)
+
+# set up sqlite stuff
+connection = sqlite3.connect('weedwatcher.db')
+cursor = connection.cursor()
 
 # set up Flask api
 def flask():
@@ -44,15 +55,7 @@ def flask():
 
 # start sensor readings
 def moisture_sensor_start():
-	import RPi.GPIO as GPIO
-	import time
-	import datetime
-	import sqlite3
-
-	connection = sqlite3.connect('weedwatcher.db')
-	cursor = connection.cursor()
-
-	DELAY = 10 # in seconds. delay between readings
+	MOISTURE_DELAY = 10 # in seconds. delay between readings
 
 	MOISTURE_1_OK = 0
 	MOISTURE_2_OK = 0
@@ -98,10 +101,34 @@ def moisture_sensor_start():
 			connection.commit()
 
 			# sleep
-			time.sleep(DELAY)
+			time.sleep(MOISTURE_DELAY)
 
 	except KeyboardInterrupt: # stop sensor readings and reset GPIO pins
 		GPIO.cleanup()
+
+def humidity_temperature_sensor_start():
+	TEMP_HUMIDITY_DELAY = 5 # seconds
+
+	try:
+		while True:
+			humidity, temperature = Adafruit_DHT.read_retry(DHT_SENSOR_TYPE, DHT_SENSOR_GPIO)
+	
+			if humidity is not None and temperature is not None:
+				print("Temp={0:0.1f}*C  Humidity={1:0.1f}%".format(temperature, humidity))
+				print("Timestamp: " + str(datetime.datetime.now()))
+
+				cursor.execute("INSERT INTO humidity VALUES(?, ?)", (humidity, str(datetime.datetime.now())))
+				cursor.execute("INSERT INTO temperature VALUES(?, ?)", (temperature, str(datetime.datetime.now())))
+				connection.commit()
+
+			else:
+				print("Failed to retrieve data from humidity sensor")
+
+			time.sleep(TEMP_HUMIDITY_DELAY)
+
+	except KeyboardInterrupt:
+		GPIO.cleanup()
+
 
 # start each part of the app in it's own process
 
@@ -114,6 +141,10 @@ process_flask.start()
 process_moisture_sensor = multiprocessing.Process(target=moisture_sensor_start, args=())
 
 process_moisture_sensor.start()
+
+process_temperature_humidity = multiprocessing.Process(target=humidity_temperature_sensor_start, args=())
+
+process_temperature_humidity.start()
 
 # start reading from temp+humidity sensor
 
